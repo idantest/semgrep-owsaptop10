@@ -1,8 +1,9 @@
 rules:
-  - id: express-cookie-session-no-httponly
-    message: "Default session middleware settings: `httpOnly` not set. It ensures
-      the cookie is sent only over HTTP(S), not client JavaScript, helping to
-      protect against cross-site scripting attacks."
+  - id: express-cookie-session-default-name
+    message: "Don’t use the default session cookie name Using the default session
+      cookie name can open your app to attacks. The security issue posed is
+      similar to X-Powered-By: a potential attacker can use it to fingerprint
+      the server and target attacks accordingly."
     severity: WARNING
     languages:
       - javascript
@@ -37,32 +38,14 @@ rules:
               $SESSION = require('express-session');
               ...
       - pattern: $SESSION(...)
-      - pattern-not-inside: $SESSION(<... {cookie:{httpOnly:true}} ...>,...)
+      - pattern-not-inside: $SESSION(<... {name:...} ...>,...)
       - pattern-not-inside: |
-          $OPTS = <... {cookie:{httpOnly:true}} ...>;
+          $OPTS = <... {name:...} ...>;
           ...
           $SESSION($OPTS,...);
       - pattern-not-inside: |
           $OPTS = ...;
           ...
-          $COOKIE = <... {httpOnly:true} ...>;
-          ...
-          $SESSION($OPTS,...);
-      - pattern-not-inside: |
-          $OPTS = ...;
-          ...
-          $OPTS.cookie = <... {httpOnly:true} ...>;
-          ...
-          $SESSION($OPTS,...);
-      - pattern-not-inside: |
-          $OPTS = ...;
-          ...
-          $COOKIE.httpOnly = true;
-          ...
-          $SESSION($OPTS,...);
-      - pattern-not-inside: |
-          $OPTS = ...;
-          ...
-          $OPTS.cookie.httpOnly = true;
+          $OPTS.name = ...;
           ...
           $SESSION($OPTS,...);
